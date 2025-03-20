@@ -9,18 +9,30 @@
         .candle-container { position: relative; display: inline-block; margin-top: 20px; }
         .candle { 
             width: 100px; height: 150px; 
-            background-color: #FFD700; border-radius: 20px 20px 5px 5px; 
+            background: linear-gradient(to bottom, #FFD700, #E6B800); /* Gradient for 3D effect */
+            border-radius: 50px; /* Proper round shape */
             position: relative; display: flex; flex-wrap: wrap;
             align-items: center; justify-content: center;
             padding: 10px;
         }
         .flame {
             width: 20px; height: 30px;
-            background-color: orange;
+            background: radial-gradient(circle, orange, red);
             border-radius: 50% 50% 30% 30%;
             position: absolute; top: -30px; left: 40px;
         }
         .drawing { position: absolute; font-size: 20px; }
+        .pattern { position: absolute; opacity: 0.5; }
+        
+        /* Additional design patterns */
+        .checkered {
+            background-image: linear-gradient(45deg, white 25%, transparent 25%, transparent 50%, white 50%, white 75%, transparent 75%, transparent);
+            background-size: 10px 10px;
+        }
+        .diamond {
+            background-image: linear-gradient(45deg, white 25%, transparent 25%, transparent 50%, white 50%, white 75%, transparent 75%, transparent);
+            background-size: 10px 10px;
+        }
     </style>
 </head>
 <body>
@@ -41,7 +53,7 @@
     
     <div class="options">
         <label>Additional Design:
-            <select id="pattern" onchange="togglePatternColor()">
+            <select id="pattern" onchange="togglePatternColor(); updateCandle()">
                 <option value="none">None</option>
                 <option value="striped">Striped</option>
                 <option value="diamond">Diamond Shapes</option>
@@ -56,7 +68,8 @@
 
     <div class="options">
         <label>Choose Drawings:
-            <select id="drawings" multiple>
+            <select id="drawings" onchange="updateCandle()">
+                <option value="none">None</option>
                 <option value="star">⭐</option>
                 <option value="heart">❤️</option>
                 <option value="flower">🌸</option>
@@ -125,13 +138,38 @@
 
         function updateCandle() {
             const color = document.getElementById("colorPicker").value;
+            const patternColor = document.getElementById("patternColorPicker").value || "white";  // Default to white if no pattern color selected
+            const patternType = document.getElementById("pattern").value;
             const candle = document.getElementById("preview");
-            candle.style.backgroundColor = color;
+            candle.style.background = `linear-gradient(to bottom, ${color}, #E6B800)`; // Base color
             
-            const drawings = Array.from(document.getElementById("drawings").selectedOptions).map(opt => opt.text);
+            // Add pattern styles
+            if (patternType === "striped") {
+                candle.className = "candle pattern striped";
+            } else if (patternType === "checkered") {
+                candle.className = "candle pattern checkered";
+            } else if (patternType === "diamond") {
+                candle.className = "candle pattern diamond";
+            } else {
+                candle.className = "candle";
+            }
+
+            // Drawings
+            const drawing = document.getElementById("drawings").value;
+            candle.innerHTML = ""; // Clear any existing drawings
+            
+            if (drawing !== "none") {
+                const drawingElement = document.createElement("span");
+                drawingElement.classList.add("drawing");
+                drawingElement.innerText = drawing;
+                drawingElement.style.top = "50%";
+                drawingElement.style.left = "50%";
+                drawingElement.style.transform = "translate(-50%, -50%)";
+                candle.appendChild(drawingElement);
+            }
+            
+            // Number of Drawings
             const drawingCount = document.getElementById("drawingCount").value;
-            candle.innerHTML = ""; 
-            
             let positions = {
                 "1": [["50%", "50%"]],
                 "2": [["50%", "30%"], ["50%", "70%"]],
@@ -141,15 +179,15 @@
             
             let selectedPositions = positions[drawingCount] || positions["1"];
             selectedPositions.forEach(pos => {
-                drawings.forEach(draw => {
+                if (drawing !== "none") {
                     let span = document.createElement("span");
                     span.classList.add("drawing");
-                    span.innerText = draw;
+                    span.innerText = drawing;
                     span.style.top = pos[0];
                     span.style.left = pos[1];
                     span.style.transform = "translate(-50%, -50%)";
                     candle.appendChild(span);
-                });
+                }
             });
         }
     </script>
