@@ -14,42 +14,20 @@
         }
         .drawing { position: absolute; font-size: 24px; }
         .hidden { display: none; }
+        .shape { position: relative; width: 100%; height: 100%; }
+        .shape.round { border-radius: 50%; }
+        .shape.square { border-radius: 0; }
+        .shape.tall { height: 300px; }
+        .shape.short { height: 100px; }
+        .shape.hexagon {
+            width: 150px;
+            height: 150px;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        }
     </style>
 </head>
 <body>
     <h2>Customize Your Candle</h2>
-    
-    <div class="options">
-        <label>Choose Color: <input type="color" id="colorPicker"></label>
-    </div>
-    
-    <div class="options">
-        <label>Choose Drawing:
-            <select id="drawing">
-                <option value="none">None</option>
-                <option value="star">⭐</option>
-                <option value="heart">❤️</option>
-                <option value="flower">🌸</option>
-                <option value="moon">🌙</option>
-                <option value="lightning">⚡</option>
-                <option value="smiley">😊</option>
-                <option value="sun">☀️</option>
-            </select>
-        </label>
-    </div>
-    
-    <div class="options">
-        <label>Choose Scent:
-            <select id="scent">
-                <option value="lavender">Lavender</option>
-                <option value="vanilla">Vanilla</option>
-                <option value="rose">Rose</option>
-                <option value="citrus">Citrus</option>
-                <option value="sandalwood">Sandalwood</option>
-                <option value="pine">Pine</option>
-            </select>
-        </label>
-    </div>
     
     <div class="options">
         <label>Choose Shape:
@@ -63,16 +41,47 @@
         </label>
     </div>
     
+    <div class="options">
+        <label>Choose Color: <input type="color" id="colorPicker"></label>
+    </div>
+    
+    <div class="options">
+        <label>Choose Drawings:
+            <select id="drawing" multiple>
+                <option value="star">⭐</option>
+                <option value="heart">❤️</option>
+                <option value="flower">🌸</option>
+                <option value="moon">🌙</option>
+                <option value="lightning">⚡</option>
+                <option value="smiley">😊</option>
+                <option value="sun">☀️</option>
+            </select>
+        </label>
+    </div>
+    
+    <div class="options">
+        <label>How Many Drawings to Add:
+            <select id="drawingQuantity">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="4">4</option>
+                <option value="pattern">Pattern</option>
+            </select>
+        </label>
+    </div>
+    
     <button onclick="finalizeCandle()">Finish Customization</button>
     
     <h3>Live Preview</h3>
     <div class="candle-preview" id="preview">
-        <span class="drawing" id="drawingPreview"></span>
+        <div class="shape" id="candleShape"></div>
+        <div id="drawingPreview" class="drawing"></div>
     </div>
     
     <h3 class="hidden" id="finalText">Your Final Candle:</h3>
     <div class="candle-preview hidden" id="finalCandle">
-        <span class="drawing" id="finalDrawing"></span>
+        <div class="shape" id="finalCandleShape"></div>
+        <div id="finalDrawing" class="drawing"></div>
     </div>
     
     <script>
@@ -81,21 +90,114 @@
         const shape = document.getElementById("shape");
         const preview = document.getElementById("preview");
         const drawingPreview = document.getElementById("drawingPreview");
+        const candleShape = document.getElementById("candleShape");
+        const drawingQuantity = document.getElementById("drawingQuantity");
         
+        // Initial shape setup
+        shape.addEventListener("change", () => {
+            updateCandleShape();
+        });
+        
+        // Color change update preview
         colorPicker.addEventListener("input", () => {
             preview.style.backgroundColor = colorPicker.value;
+            updateCandleShape();
         });
         
+        // Drawing change update preview
         drawing.addEventListener("change", () => {
-            drawingPreview.innerText = drawing.value === "none" ? "" : drawing.selectedOptions[0].text;
+            updateDrawingPreview();
         });
         
+        // Quantity change update preview
+        drawingQuantity.addEventListener("change", () => {
+            updateDrawingPreview();
+        });
+
+        function updateCandleShape() {
+            const selectedShape = shape.value;
+            candleShape.className = "shape " + selectedShape;
+            candleShape.style.backgroundColor = colorPicker.value;
+        }
+
+        function updateDrawingPreview() {
+            let selectedDrawings = Array.from(drawing.selectedOptions).map(option => option.text);
+            let quantity = drawingQuantity.value;
+            drawingPreview.innerHTML = ""; // Reset the preview
+
+            // Add drawings based on selected quantity
+            if (quantity === "pattern") {
+                // Create a repeating pattern
+                selectedDrawings.forEach((draw, index) => {
+                    let count = 0;
+                    while (count < 5) {
+                        const drawingElem = document.createElement("span");
+                        drawingElem.innerText = draw;
+                        drawingElem.style.position = "absolute";
+                        drawingElem.style.top = `${(index + count) * 30}px`; // Space out pattern
+                        drawingElem.style.left = `${count * 30}px`;
+                        drawingPreview.appendChild(drawingElem);
+                        count++;
+                    }
+                });
+            } else {
+                // Add a specific number of drawings
+                for (let i = 0; i < quantity; i++) {
+                    selectedDrawings.forEach(draw => {
+                        const drawingElem = document.createElement("span");
+                        drawingElem.innerText = draw;
+                        drawingElem.style.position = "absolute";
+                        drawingElem.style.top = `${i * 30}px`;
+                        drawingElem.style.left = `${i * 30}px`;
+                        drawingPreview.appendChild(drawingElem);
+                    });
+                }
+            }
+        }
+
         function finalizeCandle() {
             document.getElementById("finalText").classList.remove("hidden");
             document.getElementById("finalCandle").classList.remove("hidden");
-            document.getElementById("finalCandle").style.backgroundColor = colorPicker.value;
-            document.getElementById("finalDrawing").innerText = drawingPreview.innerText;
+            const finalCandleShape = document.getElementById("finalCandleShape");
+            finalCandleShape.className = "shape " + shape.value;
+            finalCandleShape.style.backgroundColor = colorPicker.value;
+
+            // Final drawing display
+            const finalDrawing = document.getElementById("finalDrawing");
+            let selectedDrawings = Array.from(drawing.selectedOptions).map(option => option.text);
+            let quantity = drawingQuantity.value;
+            finalDrawing.innerHTML = ""; // Reset
+
+            // Add drawings to final preview
+            if (quantity === "pattern") {
+                selectedDrawings.forEach((draw, index) => {
+                    let count = 0;
+                    while (count < 5) {
+                        const drawingElem = document.createElement("span");
+                        drawingElem.innerText = draw;
+                        drawingElem.style.position = "absolute";
+                        drawingElem.style.top = `${(index + count) * 30}px`;
+                        drawingElem.style.left = `${count * 30}px`;
+                        finalDrawing.appendChild(drawingElem);
+                        count++;
+                    }
+                });
+            } else {
+                for (let i = 0; i < quantity; i++) {
+                    selectedDrawings.forEach(draw => {
+                        const drawingElem = document.createElement("span");
+                        drawingElem.innerText = draw;
+                        drawingElem.style.position = "absolute";
+                        drawingElem.style.top = `${i * 30}px`;
+                        drawingElem.style.left = `${i * 30}px`;
+                        finalDrawing.appendChild(drawingElem);
+                    });
+                }
+            }
         }
+        
+        // Set initial shape on page load
+        updateCandleShape();
     </script>
 </body>
 </html>
