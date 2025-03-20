@@ -6,99 +6,74 @@
     <title>Customize Your Candle</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; }
-        
-        /* Styling for the candle container */
-        .candle-preview { 
-            margin: 20px auto; width: 150px; height: 300px; 
-            border-radius: 10px; border: 2px solid black;
-            display: flex; align-items: center; justify-content: center;
-            position: relative;
-            overflow: hidden;
+        .candle-container { position: relative; display: inline-block; margin-top: 20px; }
+        .candle { 
+            width: 100px; height: 150px; 
+            background-color: #FFD700; border-radius: 20px 20px 5px 5px; 
+            position: relative; display: flex; flex-wrap: wrap;
+            align-items: center; justify-content: center;
+            padding: 10px;
         }
-
-        /* Basic candle shapes */
-        .shape { position: relative; width: 100%; height: 100%; }
-        .shape.round { border-radius: 50%; background: linear-gradient(to top, #ffcc99, #ff9966); }
-        .shape.square { border-radius: 0; background: linear-gradient(to top, #ffcc99, #ff9966); }
-        .shape.tall { height: 400px; background: linear-gradient(to top, #ffcc99, #ff9966); }
-        .shape.short { height: 200px; background: linear-gradient(to top, #ffcc99, #ff9966); }
-        
-        /* Wick styling */
-        .wick {
-            position: absolute;
-            top: 10px;
-            width: 5px;
-            height: 50px;
-            background-color: #333;
-            left: 50%;
-            transform: translateX(-50%);
+        .flame {
+            width: 20px; height: 30px;
+            background-color: orange;
+            border-radius: 50% 50% 30% 30%;
+            position: absolute; top: -30px; left: 40px;
         }
-
-        /* Styling for the drawings */
-        .drawing {
-            position: absolute;
-            font-size: 24px;
-            color: black;
-        }
-
-        .drawing.circle {
-            border-radius: 50%;
-            background-color: black;
-            width: 20px;
-            height: 20px;
-        }
-
-        .drawing.star {
-            font-size: 30px;
-        }
-
-        .drawing.heart {
-            font-size: 30px;
-        }
-
-        .drawing.moon {
-            font-size: 30px;
-        }
-
-        .hidden { display: none; }
+        .drawing { position: absolute; font-size: 20px; }
     </style>
 </head>
 <body>
     <h2>Customize Your Candle</h2>
     
-    <!-- Candle Shape Selection -->
+    <label>Choose Shape:
+        <select id="shape" onchange="updateShape()">
+            <option value="short">Short</option>
+            <option value="tall">Tall</option>
+            <option value="round">Round</option>
+            <option value="square">Square</option>
+        </select>
+    </label>
+
     <div class="options">
-        <label>Choose Shape:
-            <select id="shape">
-                <option value="round">Round</option>
-                <option value="square">Square</option>
-                <option value="tall">Tall</option>
-                <option value="short">Short</option>
+        <label>Choose Color: <input type="color" id="colorPicker" onchange="updateCandle()"></label>
+    </div>
+    
+    <div class="options">
+        <label>Additional Design:
+            <select id="pattern" onchange="togglePatternColor()">
+                <option value="none">None</option>
+                <option value="striped">Striped</option>
+                <option value="diamond">Diamond Shapes</option>
+                <option value="checkered">Checkered</option>
             </select>
         </label>
     </div>
-
-    <!-- Candle Color Selection -->
-    <div class="options">
-        <label>Choose Color: <input type="color" id="colorPicker"></label>
+    
+    <div class="options hidden" id="patternColorDiv">
+        <label>Choose Pattern Color: <input type="color" id="patternColorPicker" onchange="updateCandle()"></label>
     </div>
 
-    <!-- Drawing Selection -->
     <div class="options">
         <label>Choose Drawings:
-            <select id="drawing" multiple>
-                <option value="circle">Circle</option>
-                <option value="star">Star</option>
-                <option value="heart">Heart</option>
-                <option value="moon">Moon</option>
+            <select id="drawings" multiple>
+                <option value="star">⭐</option>
+                <option value="heart">❤️</option>
+                <option value="flower">🌸</option>
+                <option value="moon">🌙</option>
+                <option value="lightning">⚡</option>
+                <option value="smiley">😊</option>
+                <option value="butterfly">🦋</option>
+                <option value="cherry">🍒</option>
+                <option value="strawberry">🍓</option>
+                <option value="football">🏈</option>
             </select>
         </label>
     </div>
-
-    <!-- Quantity Selection for Drawings -->
+    
     <div class="options">
-        <label>How Many Drawings to Add:
-            <select id="drawingQuantity">
+        <label>Number of Drawings:
+            <select id="drawingCount" onchange="updateCandle()">
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="4">4</option>
@@ -106,129 +81,77 @@
             </select>
         </label>
     </div>
-
-    <button onclick="finalizeCandle()">Finish Customization</button>
     
+    <div class="options">
+        <label>Choose Scent:
+            <select id="scent">
+                <option value="lavender">Lavender</option>
+                <option value="citrus">Citrus</option>
+                <option value="vanilla">Vanilla</option>
+                <option value="sandalwood">Sandalwood</option>
+                <option value="jasmine">Jasmine</option>
+                <option value="lotus">Lotus</option>
+                <option value="cinnamon">Cinnamon</option>
+                <option value="apple">Apple</option>
+            </select>
+        </label>
+    </div>
+
     <h3>Live Preview</h3>
-    <div class="candle-preview" id="preview">
-        <div class="shape" id="candleShape"></div>
-        <div id="drawingPreview" class="drawing"></div>
-        <div class="wick"></div>
+    <div class="candle-container">
+        <div class="flame"></div>
+        <div class="candle" id="preview"></div>
     </div>
     
-    <h3 class="hidden" id="finalText">Your Final Candle:</h3>
-    <div class="candle-preview hidden" id="finalCandle">
-        <div class="shape" id="finalCandleShape"></div>
-        <div id="finalDrawing" class="drawing"></div>
-        <div class="wick"></div>
-    </div>
-
     <script>
-        const colorPicker = document.getElementById("colorPicker");
-        const drawing = document.getElementById("drawing");
-        const shape = document.getElementById("shape");
-        const preview = document.getElementById("preview");
-        const drawingPreview = document.getElementById("drawingPreview");
-        const candleShape = document.getElementById("candleShape");
-        const drawingQuantity = document.getElementById("drawingQuantity");
-
-        // Initial shape setup
-        shape.addEventListener("change", () => {
-            updateCandleShape();
-        });
-        
-        // Color change update preview
-        colorPicker.addEventListener("input", () => {
-            preview.style.backgroundColor = colorPicker.value;
-            updateCandleShape();
-        });
-        
-        // Drawing change update preview
-        drawing.addEventListener("change", () => {
-            updateDrawingPreview();
-        });
-        
-        // Quantity change update preview
-        drawingQuantity.addEventListener("change", () => {
-            updateDrawingPreview();
-        });
-
-        function updateCandleShape() {
-            const selectedShape = shape.value;
-            candleShape.className = "shape " + selectedShape;
-            candleShape.style.backgroundColor = colorPicker.value;
-        }
-
-        function updateDrawingPreview() {
-            let selectedDrawings = Array.from(drawing.selectedOptions).map(option => option.value);
-            let quantity = drawingQuantity.value;
-            drawingPreview.innerHTML = ""; // Reset the preview
-
-            if (quantity === "pattern") {
-                let positionY = 50;
-                selectedDrawings.forEach(draw => {
-                    for (let i = 0; i < 5; i++) {
-                        const drawingElem = document.createElement("div");
-                        drawingElem.classList.add("drawing", draw);
-                        drawingElem.style.top = `${positionY}px`;
-                        drawingElem.style.left = `${(i * 30) + 10}px`;
-                        drawingPreview.appendChild(drawingElem);
-                    }
-                    positionY += 50; // Move down the next pattern line
-                });
-            } else {
-                for (let i = 0; i < quantity; i++) {
-                    selectedDrawings.forEach(draw => {
-                        const drawingElem = document.createElement("div");
-                        drawingElem.classList.add("drawing", draw);
-                        drawingElem.style.top = `${(i * 40) + 50}px`;
-                        drawingElem.style.left = `${(i * 30) + 20}px`;
-                        drawingPreview.appendChild(drawingElem);
-                    });
-                }
+        function updateShape() {
+            const shape = document.getElementById("shape").value;
+            const candle = document.getElementById("preview");
+            if (shape === "tall") {
+                candle.style.height = "200px";
+            } else if (shape === "short") {
+                candle.style.height = "150px";
+            } else if (shape === "round") {
+                candle.style.borderRadius = "50px";
+            } else if (shape === "square") {
+                candle.style.borderRadius = "0";
             }
         }
 
-        function finalizeCandle() {
-            document.getElementById("finalText").classList.remove("hidden");
-            document.getElementById("finalCandle").classList.remove("hidden");
-            const finalCandleShape = document.getElementById("finalCandleShape");
-            finalCandleShape.className = "shape " + shape.value;
-            finalCandleShape.style.backgroundColor = colorPicker.value;
-
-            // Final drawing display
-            const finalDrawing = document.getElementById("finalDrawing");
-            let selectedDrawings = Array.from(drawing.selectedOptions).map(option => option.value);
-            let quantity = drawingQuantity.value;
-            finalDrawing.innerHTML = ""; // Reset
-
-            if (quantity === "pattern") {
-                let positionY = 50;
-                selectedDrawings.forEach(draw => {
-                    for (let i = 0; i < 5; i++) {
-                        const drawingElem = document.createElement("div");
-                        drawingElem.classList.add("drawing", draw);
-                        drawingElem.style.top = `${positionY}px`;
-                        drawingElem.style.left = `${(i * 30) + 10}px`;
-                        finalDrawing.appendChild(drawingElem);
-                    }
-                    positionY += 50;
-                });
-            } else {
-                for (let i = 0; i < quantity; i++) {
-                    selectedDrawings.forEach(draw => {
-                        const drawingElem = document.createElement("div");
-                        drawingElem.classList.add("drawing", draw);
-                        drawingElem.style.top = `${(i * 40) + 50}px`;
-                        drawingElem.style.left = `${(i * 30) + 20}px`;
-                        finalDrawing.appendChild(drawingElem);
-                    });
-                }
-            }
+        function togglePatternColor() {
+            const pattern = document.getElementById("pattern").value;
+            document.getElementById("patternColorDiv").style.display = pattern === "none" ? "none" : "block";
         }
-        
-        // Set initial shape on page load
-        updateCandleShape();
+
+        function updateCandle() {
+            const color = document.getElementById("colorPicker").value;
+            const candle = document.getElementById("preview");
+            candle.style.backgroundColor = color;
+            
+            const drawings = Array.from(document.getElementById("drawings").selectedOptions).map(opt => opt.text);
+            const drawingCount = document.getElementById("drawingCount").value;
+            candle.innerHTML = ""; 
+            
+            let positions = {
+                "1": [["50%", "50%"]],
+                "2": [["50%", "30%"], ["50%", "70%"]],
+                "4": [["30%", "30%"], ["70%", "30%"], ["30%", "70%"], ["70%", "70%"]],
+                "pattern": [["20%", "20%"], ["50%", "20%"], ["80%", "20%"], ["20%", "50%"], ["50%", "50%"], ["80%", "50%"], ["20%", "80%"], ["50%", "80%"], ["80%", "80%"]]
+            };
+            
+            let selectedPositions = positions[drawingCount] || positions["1"];
+            selectedPositions.forEach(pos => {
+                drawings.forEach(draw => {
+                    let span = document.createElement("span");
+                    span.classList.add("drawing");
+                    span.innerText = draw;
+                    span.style.top = pos[0];
+                    span.style.left = pos[1];
+                    span.style.transform = "translate(-50%, -50%)";
+                    candle.appendChild(span);
+                });
+            });
+        }
     </script>
 </body>
 </html>
