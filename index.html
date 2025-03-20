@@ -23,16 +23,6 @@
         }
         .drawing { position: absolute; font-size: 20px; }
         .pattern { position: absolute; opacity: 0.5; }
-        
-        /* Additional design patterns */
-        .checkered {
-            background-image: linear-gradient(45deg, white 25%, transparent 25%, transparent 50%, white 50%, white 75%, transparent 75%, transparent);
-            background-size: 10px 10px;
-        }
-        .diamond {
-            background-image: linear-gradient(45deg, white 25%, transparent 25%, transparent 50%, white 50%, white 75%, transparent 75%, transparent);
-            background-size: 10px 10px;
-        }
     </style>
 </head>
 <body>
@@ -53,11 +43,10 @@
     
     <div class="options">
         <label>Additional Design:
-            <select id="pattern" onchange="togglePatternColor(); updateCandle()">
+            <select id="pattern" onchange="togglePatternColor()">
                 <option value="none">None</option>
                 <option value="striped">Striped</option>
-                <option value="diamond">Diamond Shapes</option>
-                <option value="checkered">Checkered</option>
+                <option value="triangular">Triangular</option>
             </select>
         </label>
     </div>
@@ -70,16 +59,16 @@
         <label>Choose Drawings:
             <select id="drawings" onchange="updateCandle()">
                 <option value="none">None</option>
-                <option value="star">⭐</option>
-                <option value="heart">❤️</option>
-                <option value="flower">🌸</option>
-                <option value="moon">🌙</option>
-                <option value="lightning">⚡</option>
-                <option value="smiley">😊</option>
-                <option value="butterfly">🦋</option>
-                <option value="cherry">🍒</option>
-                <option value="strawberry">🍓</option>
-                <option value="football">🏈</option>
+                <option value="⭐">⭐</option>
+                <option value="❤️">❤️</option>
+                <option value="🌸">🌸</option>
+                <option value="🌙">🌙</option>
+                <option value="⚡">⚡</option>
+                <option value="😊">😊</option>
+                <option value="🦋">🦋</option>
+                <option value="🍒">🍒</option>
+                <option value="🍓">🍓</option>
+                <option value="🏈">🏈</option>
             </select>
         </label>
     </div>
@@ -134,61 +123,56 @@
         function togglePatternColor() {
             const pattern = document.getElementById("pattern").value;
             document.getElementById("patternColorDiv").style.display = pattern === "none" ? "none" : "block";
+            updateCandle(); // Update candle preview immediately when pattern changes
         }
 
         function updateCandle() {
             const color = document.getElementById("colorPicker").value;
-            const patternColor = document.getElementById("patternColorPicker").value || "white";  // Default to white if no pattern color selected
+            const patternColor = document.getElementById("patternColorPicker").value || "white"; // Default color
             const patternType = document.getElementById("pattern").value;
             const candle = document.getElementById("preview");
-            candle.style.background = `linear-gradient(to bottom, ${color}, #E6B800)`; // Base color
-            
-            // Add pattern styles
+
+            // Set base color with gradient
+            candle.style.background = color; // Base color
+
+            // Set pattern background
             if (patternType === "striped") {
-                candle.className = "candle pattern striped";
-            } else if (patternType === "checkered") {
-                candle.className = "candle pattern checkered";
-            } else if (patternType === "diamond") {
-                candle.className = "candle pattern diamond";
+                candle.style.backgroundImage = `repeating-linear-gradient(45deg, ${patternColor}, ${patternColor} 10px, ${color} 10px, ${color} 20px)`;
+            } else if (patternType === "triangular") {
+                // Proper triangular pattern with small triangles
+                candle.style.backgroundImage = `linear-gradient(45deg, ${patternColor} 25%, transparent 25%), 
+                                                 linear-gradient(-45deg, ${patternColor} 25%, transparent 25%)`;
+                candle.style.backgroundSize = "20px 20px"; // Adjust grid size to create triangles
             } else {
-                candle.className = "candle";
+                candle.style.backgroundImage = "none";
             }
 
-            // Drawings
+            // Handle drawings
             const drawing = document.getElementById("drawings").value;
-            candle.innerHTML = ""; // Clear any existing drawings
-            
-            if (drawing !== "none") {
-                const drawingElement = document.createElement("span");
-                drawingElement.classList.add("drawing");
-                drawingElement.innerText = drawing;
-                drawingElement.style.top = "50%";
-                drawingElement.style.left = "50%";
-                drawingElement.style.transform = "translate(-50%, -50%)";
-                candle.appendChild(drawingElement);
-            }
-            
-            // Number of Drawings
             const drawingCount = document.getElementById("drawingCount").value;
-            let positions = {
-                "1": [["50%", "50%"]],
-                "2": [["50%", "30%"], ["50%", "70%"]],
-                "4": [["30%", "30%"], ["70%", "30%"], ["30%", "70%"], ["70%", "70%"]],
-                "pattern": [["20%", "20%"], ["50%", "20%"], ["80%", "20%"], ["20%", "50%"], ["50%", "50%"], ["80%", "50%"], ["20%", "80%"], ["50%", "80%"], ["80%", "80%"]]
-            };
-            
-            let selectedPositions = positions[drawingCount] || positions["1"];
-            selectedPositions.forEach(pos => {
-                if (drawing !== "none") {
-                    let span = document.createElement("span");
-                    span.classList.add("drawing");
-                    span.innerText = drawing;
-                    span.style.top = pos[0];
-                    span.style.left = pos[1];
-                    span.style.transform = "translate(-50%, -50%)";
-                    candle.appendChild(span);
-                }
-            });
+            candle.innerHTML = ""; 
+
+            if (drawing !== "none") {
+                const drawings = [drawing]; // Ensure only the selected drawing is shown
+                let positions = {
+                    "1": [["50%", "50%"]],
+                    "2": [["50%", "30%"], ["50%", "70%"]],
+                    "4": [["30%", "30%"], ["70%", "30%"], ["30%", "70%"], ["70%", "70%"]],
+                    "pattern": [["20%", "20%"], ["50%", "20%"], ["80%", "20%"], ["20%", "50%"], ["50%", "50%"], ["80%", "50%"], ["20%", "80%"], ["50%", "80%"], ["80%", "80%"]]
+                };
+                let selectedPositions = positions[drawingCount] || positions["1"];
+                selectedPositions.forEach(pos => {
+                    drawings.forEach(draw => {
+                        let span = document.createElement("span");
+                        span.classList.add("drawing");
+                        span.innerText = draw;  // Emoji is shown directly here
+                        span.style.top = pos[0];
+                        span.style.left = pos[1];
+                        span.style.transform = "translate(-50%, -50%)";
+                        candle.appendChild(span);
+                    });
+                });
+            }
         }
     </script>
 </body>
