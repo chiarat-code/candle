@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customize Your Candle</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .candle-preview { margin: 20px auto; width: 150px; height: 200px; border-radius: 10px; background-color: #ccc; }
+        .options { margin: 10px; }
+    </style>
+</head>
+<body>
+
+    <h2>Customize Your Candle</h2>
+
+    <div class="candle-preview" id="candlePreview"></div>
+
+    <div class="options">
+        <label>Choose Color: <input type="color" id="colorPicker"></label>
+    </div>
+
+    <div class="options">
+        <label>Choose Drawing:
+            <select id="drawing">
+                <option value="none">None</option>
+                <option value="star">Star</option>
+                <option value="heart">Heart</option>
+                <option value="flower">Flower</option>
+                <option value="moon">Moon</option>
+            </select>
+        </label>
+    </div>
+
+    <div class="options">
+        <label>Choose Scent:
+            <select id="scent">
+                <option value="lavender">Lavender</option>
+                <option value="vanilla">Vanilla</option>
+                <option value="rose">Rose</option>
+                <option value="citrus">Citrus</option>
+                <option value="sandalwood">Sandalwood</option>
+            </select>
+        </label>
+    </div>
+
+    <div class="options">
+        <label>Choose Shape:
+            <select id="shape">
+                <option value="round">Round</option>
+                <option value="square">Square</option>
+                <option value="tall">Tall</option>
+                <option value="short">Short</option>
+                <option value="hexagon">Hexagon</option>
+            </select>
+        </label>
+    </div>
+
+    <script>
+        const colorPicker = document.getElementById("colorPicker");
+        const candlePreview = document.getElementById("candlePreview");
+
+        colorPicker.addEventListener("input", function() {
+            candlePreview.style.backgroundColor = colorPicker.value;
+        });
+    </script>
+
+</body>
+</html>
