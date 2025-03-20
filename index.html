@@ -6,29 +6,67 @@
     <title>Customize Your Candle</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; }
+        
+        /* Styling for the candle container */
         .candle-preview { 
-            margin: 20px auto; width: 150px; height: 200px; 
+            margin: 20px auto; width: 150px; height: 300px; 
             border-radius: 10px; border: 2px solid black;
             display: flex; align-items: center; justify-content: center;
             position: relative;
+            overflow: hidden;
         }
-        .drawing { position: absolute; font-size: 24px; }
-        .hidden { display: none; }
+
+        /* Basic candle shapes */
         .shape { position: relative; width: 100%; height: 100%; }
-        .shape.round { border-radius: 50%; }
-        .shape.square { border-radius: 0; }
-        .shape.tall { height: 300px; }
-        .shape.short { height: 100px; }
-        .shape.hexagon {
-            width: 150px;
-            height: 150px;
-            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        .shape.round { border-radius: 50%; background: linear-gradient(to top, #ffcc99, #ff9966); }
+        .shape.square { border-radius: 0; background: linear-gradient(to top, #ffcc99, #ff9966); }
+        .shape.tall { height: 400px; background: linear-gradient(to top, #ffcc99, #ff9966); }
+        .shape.short { height: 200px; background: linear-gradient(to top, #ffcc99, #ff9966); }
+        
+        /* Wick styling */
+        .wick {
+            position: absolute;
+            top: 10px;
+            width: 5px;
+            height: 50px;
+            background-color: #333;
+            left: 50%;
+            transform: translateX(-50%);
         }
+
+        /* Styling for the drawings */
+        .drawing {
+            position: absolute;
+            font-size: 24px;
+            color: black;
+        }
+
+        .drawing.circle {
+            border-radius: 50%;
+            background-color: black;
+            width: 20px;
+            height: 20px;
+        }
+
+        .drawing.star {
+            font-size: 30px;
+        }
+
+        .drawing.heart {
+            font-size: 30px;
+        }
+
+        .drawing.moon {
+            font-size: 30px;
+        }
+
+        .hidden { display: none; }
     </style>
 </head>
 <body>
     <h2>Customize Your Candle</h2>
     
+    <!-- Candle Shape Selection -->
     <div class="options">
         <label>Choose Shape:
             <select id="shape">
@@ -36,29 +74,28 @@
                 <option value="square">Square</option>
                 <option value="tall">Tall</option>
                 <option value="short">Short</option>
-                <option value="hexagon">Hexagon</option>
             </select>
         </label>
     </div>
-    
+
+    <!-- Candle Color Selection -->
     <div class="options">
         <label>Choose Color: <input type="color" id="colorPicker"></label>
     </div>
-    
+
+    <!-- Drawing Selection -->
     <div class="options">
         <label>Choose Drawings:
             <select id="drawing" multiple>
-                <option value="star">⭐</option>
-                <option value="heart">❤️</option>
-                <option value="flower">🌸</option>
-                <option value="moon">🌙</option>
-                <option value="lightning">⚡</option>
-                <option value="smiley">😊</option>
-                <option value="sun">☀️</option>
+                <option value="circle">Circle</option>
+                <option value="star">Star</option>
+                <option value="heart">Heart</option>
+                <option value="moon">Moon</option>
             </select>
         </label>
     </div>
-    
+
+    <!-- Quantity Selection for Drawings -->
     <div class="options">
         <label>How Many Drawings to Add:
             <select id="drawingQuantity">
@@ -69,21 +106,23 @@
             </select>
         </label>
     </div>
-    
+
     <button onclick="finalizeCandle()">Finish Customization</button>
     
     <h3>Live Preview</h3>
     <div class="candle-preview" id="preview">
         <div class="shape" id="candleShape"></div>
         <div id="drawingPreview" class="drawing"></div>
+        <div class="wick"></div>
     </div>
     
     <h3 class="hidden" id="finalText">Your Final Candle:</h3>
     <div class="candle-preview hidden" id="finalCandle">
         <div class="shape" id="finalCandleShape"></div>
         <div id="finalDrawing" class="drawing"></div>
+        <div class="wick"></div>
     </div>
-    
+
     <script>
         const colorPicker = document.getElementById("colorPicker");
         const drawing = document.getElementById("drawing");
@@ -92,7 +131,7 @@
         const drawingPreview = document.getElementById("drawingPreview");
         const candleShape = document.getElementById("candleShape");
         const drawingQuantity = document.getElementById("drawingQuantity");
-        
+
         // Initial shape setup
         shape.addEventListener("change", () => {
             updateCandleShape();
@@ -121,34 +160,29 @@
         }
 
         function updateDrawingPreview() {
-            let selectedDrawings = Array.from(drawing.selectedOptions).map(option => option.text);
+            let selectedDrawings = Array.from(drawing.selectedOptions).map(option => option.value);
             let quantity = drawingQuantity.value;
             drawingPreview.innerHTML = ""; // Reset the preview
 
-            // Add drawings based on selected quantity
             if (quantity === "pattern") {
-                // Create a repeating pattern
-                selectedDrawings.forEach((draw, index) => {
-                    let count = 0;
-                    while (count < 5) {
-                        const drawingElem = document.createElement("span");
-                        drawingElem.innerText = draw;
-                        drawingElem.style.position = "absolute";
-                        drawingElem.style.top = `${(index + count) * 30}px`; // Space out pattern
-                        drawingElem.style.left = `${count * 30}px`;
+                let positionY = 50;
+                selectedDrawings.forEach(draw => {
+                    for (let i = 0; i < 5; i++) {
+                        const drawingElem = document.createElement("div");
+                        drawingElem.classList.add("drawing", draw);
+                        drawingElem.style.top = `${positionY}px`;
+                        drawingElem.style.left = `${(i * 30) + 10}px`;
                         drawingPreview.appendChild(drawingElem);
-                        count++;
                     }
+                    positionY += 50; // Move down the next pattern line
                 });
             } else {
-                // Add a specific number of drawings
                 for (let i = 0; i < quantity; i++) {
                     selectedDrawings.forEach(draw => {
-                        const drawingElem = document.createElement("span");
-                        drawingElem.innerText = draw;
-                        drawingElem.style.position = "absolute";
-                        drawingElem.style.top = `${i * 30}px`;
-                        drawingElem.style.left = `${i * 30}px`;
+                        const drawingElem = document.createElement("div");
+                        drawingElem.classList.add("drawing", draw);
+                        drawingElem.style.top = `${(i * 40) + 50}px`;
+                        drawingElem.style.left = `${(i * 30) + 20}px`;
                         drawingPreview.appendChild(drawingElem);
                     });
                 }
@@ -164,32 +198,29 @@
 
             // Final drawing display
             const finalDrawing = document.getElementById("finalDrawing");
-            let selectedDrawings = Array.from(drawing.selectedOptions).map(option => option.text);
+            let selectedDrawings = Array.from(drawing.selectedOptions).map(option => option.value);
             let quantity = drawingQuantity.value;
             finalDrawing.innerHTML = ""; // Reset
 
-            // Add drawings to final preview
             if (quantity === "pattern") {
-                selectedDrawings.forEach((draw, index) => {
-                    let count = 0;
-                    while (count < 5) {
-                        const drawingElem = document.createElement("span");
-                        drawingElem.innerText = draw;
-                        drawingElem.style.position = "absolute";
-                        drawingElem.style.top = `${(index + count) * 30}px`;
-                        drawingElem.style.left = `${count * 30}px`;
+                let positionY = 50;
+                selectedDrawings.forEach(draw => {
+                    for (let i = 0; i < 5; i++) {
+                        const drawingElem = document.createElement("div");
+                        drawingElem.classList.add("drawing", draw);
+                        drawingElem.style.top = `${positionY}px`;
+                        drawingElem.style.left = `${(i * 30) + 10}px`;
                         finalDrawing.appendChild(drawingElem);
-                        count++;
                     }
+                    positionY += 50;
                 });
             } else {
                 for (let i = 0; i < quantity; i++) {
                     selectedDrawings.forEach(draw => {
-                        const drawingElem = document.createElement("span");
-                        drawingElem.innerText = draw;
-                        drawingElem.style.position = "absolute";
-                        drawingElem.style.top = `${i * 30}px`;
-                        drawingElem.style.left = `${i * 30}px`;
+                        const drawingElem = document.createElement("div");
+                        drawingElem.classList.add("drawing", draw);
+                        drawingElem.style.top = `${(i * 40) + 50}px`;
+                        drawingElem.style.left = `${(i * 30) + 20}px`;
                         finalDrawing.appendChild(drawingElem);
                     });
                 }
