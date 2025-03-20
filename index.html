@@ -6,32 +6,38 @@
     <title>Customize Your Candle</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; }
-        .candle-preview { margin: 20px auto; width: 150px; height: 200px; border-radius: 10px; background-color: #ccc; }
-        .options { margin: 10px; }
+        .candle-preview { 
+            margin: 20px auto; width: 150px; height: 200px; 
+            border-radius: 10px; border: 2px solid black;
+            display: flex; align-items: center; justify-content: center;
+            position: relative;
+        }
+        .drawing { position: absolute; font-size: 24px; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
-
     <h2>Customize Your Candle</h2>
-
-    <div class="candle-preview" id="candlePreview"></div>
-
+    
     <div class="options">
         <label>Choose Color: <input type="color" id="colorPicker"></label>
     </div>
-
+    
     <div class="options">
         <label>Choose Drawing:
             <select id="drawing">
                 <option value="none">None</option>
-                <option value="star">Star</option>
-                <option value="heart">Heart</option>
-                <option value="flower">Flower</option>
-                <option value="moon">Moon</option>
+                <option value="star">⭐</option>
+                <option value="heart">❤️</option>
+                <option value="flower">🌸</option>
+                <option value="moon">🌙</option>
+                <option value="lightning">⚡</option>
+                <option value="smiley">😊</option>
+                <option value="sun">☀️</option>
             </select>
         </label>
     </div>
-
+    
     <div class="options">
         <label>Choose Scent:
             <select id="scent">
@@ -40,10 +46,11 @@
                 <option value="rose">Rose</option>
                 <option value="citrus">Citrus</option>
                 <option value="sandalwood">Sandalwood</option>
+                <option value="pine">Pine</option>
             </select>
         </label>
     </div>
-
+    
     <div class="options">
         <label>Choose Shape:
             <select id="shape">
@@ -55,15 +62,40 @@
             </select>
         </label>
     </div>
-
+    
+    <button onclick="finalizeCandle()">Finish Customization</button>
+    
+    <h3>Live Preview</h3>
+    <div class="candle-preview" id="preview">
+        <span class="drawing" id="drawingPreview"></span>
+    </div>
+    
+    <h3 class="hidden" id="finalText">Your Final Candle:</h3>
+    <div class="candle-preview hidden" id="finalCandle">
+        <span class="drawing" id="finalDrawing"></span>
+    </div>
+    
     <script>
         const colorPicker = document.getElementById("colorPicker");
-        const candlePreview = document.getElementById("candlePreview");
-
-        colorPicker.addEventListener("input", function() {
-            candlePreview.style.backgroundColor = colorPicker.value;
+        const drawing = document.getElementById("drawing");
+        const shape = document.getElementById("shape");
+        const preview = document.getElementById("preview");
+        const drawingPreview = document.getElementById("drawingPreview");
+        
+        colorPicker.addEventListener("input", () => {
+            preview.style.backgroundColor = colorPicker.value;
         });
+        
+        drawing.addEventListener("change", () => {
+            drawingPreview.innerText = drawing.value === "none" ? "" : drawing.selectedOptions[0].text;
+        });
+        
+        function finalizeCandle() {
+            document.getElementById("finalText").classList.remove("hidden");
+            document.getElementById("finalCandle").classList.remove("hidden");
+            document.getElementById("finalCandle").style.backgroundColor = colorPicker.value;
+            document.getElementById("finalDrawing").innerText = drawingPreview.innerText;
+        }
     </script>
-
 </body>
 </html>
