@@ -3,176 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customize Your Candle</title>
+    <title>Candle Customizer</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; }
-        .candle-container { position: relative; display: inline-block; margin-top: 20px; }
-        .candle { 
-            width: 100px; height: 150px; 
-            background: linear-gradient(to bottom, #FFD700, #E6B800); /* Gradient for 3D effect */
-            border-radius: 50px; /* Proper round shape */
-            position: relative; display: flex; flex-wrap: wrap;
-            align-items: center; justify-content: center;
-            padding: 10px;
-        }
-        .flame {
-            width: 20px; height: 30px;
-            background: radial-gradient(circle, orange, red);
-            border-radius: 50% 50% 30% 30%;
-            position: absolute; top: -30px; left: 40px;
-        }
-        .drawing { position: absolute; font-size: 20px; }
-        .pattern { position: absolute; opacity: 0.5; }
+        .container { margin: 20px auto; width: 300px; }
+        img { width: 100%; max-width: 250px; display: block; margin: auto; }
     </style>
 </head>
 <body>
     <h2>Customize Your Candle</h2>
     
-    <label>Choose Shape:
-        <select id="shape" onchange="updateShape()">
-            <option value="short">Short</option>
-            <option value="tall">Tall</option>
+    <div class="container">
+        <img id="candleImage" src="images/candle round standard.png" alt="Customized Candle">
+        
+        <label>Choose Shape:</label>
+        <select id="shape">
             <option value="round">Round</option>
             <option value="square">Square</option>
+            <option value="cylinder">Cylinder</option>
         </select>
-    </label>
-
-    <div class="options">
-        <label>Choose Color: <input type="color" id="colorPicker" onchange="updateCandle()"></label>
-    </div>
-    
-    <div class="options">
-        <label>Additional Design:
-            <select id="pattern" onchange="togglePatternColor()">
-                <option value="none">None</option>
-                <option value="striped">Striped</option>
-                <option value="triangular">Triangular</option>
-            </select>
-        </label>
-    </div>
-    
-    <div class="options hidden" id="patternColorDiv">
-        <label>Choose Pattern Color: <input type="color" id="patternColorPicker" onchange="updateCandle()"></label>
-    </div>
-
-    <div class="options">
-        <label>Choose Drawings:
-            <select id="drawings" onchange="updateCandle()">
-                <option value="none">None</option>
-                <option value="⭐">⭐</option>
-                <option value="❤️">❤️</option>
-                <option value="🌸">🌸</option>
-                <option value="🌙">🌙</option>
-                <option value="⚡">⚡</option>
-                <option value="😊">😊</option>
-                <option value="🦋">🦋</option>
-                <option value="🍒">🍒</option>
-                <option value="🍓">🍓</option>
-                <option value="🏈">🏈</option>
-            </select>
-        </label>
-    </div>
-    
-    <div class="options">
-        <label>Number of Drawings:
-            <select id="drawingCount" onchange="updateCandle()">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="4">4</option>
-                <option value="pattern">Pattern</option>
-            </select>
-        </label>
-    </div>
-    
-    <div class="options">
-        <label>Choose Scent:
-            <select id="scent">
-                <option value="lavender">Lavender</option>
-                <option value="citrus">Citrus</option>
-                <option value="vanilla">Vanilla</option>
-                <option value="sandalwood">Sandalwood</option>
-                <option value="jasmine">Jasmine</option>
-                <option value="lotus">Lotus</option>
-                <option value="cinnamon">Cinnamon</option>
-                <option value="apple">Apple</option>
-            </select>
-        </label>
-    </div>
-
-    <h3>Live Preview</h3>
-    <div class="candle-container">
-        <div class="flame"></div>
-        <div class="candle" id="preview"></div>
+        
+        <label>Choose Color:</label>
+        <select id="color">
+            <option value="standard">Standard</option>
+            <option value="green">Green</option>
+            <option value="blue">Blue</option>
+            <option value="purple">Purple</option>
+            <option value="pink">Pink</option>
+            <option value="red">Red</option>
+            <option value="orange">Orange</option>
+            <option value="yellow">Yellow</option>
+        </select>
+        
+        <label>Choose Drawing:</label>
+        <select id="drawing">
+            <option value="">None</option>
+            <option value="heart">Heart</option>
+            <option value="star">Star</option>
+            <option value="flower">Flower</option>
+        </select>
+        
+        <label>Choose Scent:</label>
+        <select id="scent">
+            <option value="Vanilla">Vanilla</option>
+            <option value="Lavender">Lavender</option>
+            <option value="Sandalwood">Sandalwood</option>
+            <option value="Apple & Cinnamon">Apple & Cinnamon</option>
+            <option value="Lotus">Lotus</option>
+            <option value="Lilac">Lilac</option>
+        </select>
+        
+        <p id="finalScent">Selected Scent: None</p>
+        
+        <button onclick="updateCandle()">Show Final Candle</button>
     </div>
     
     <script>
-        function updateShape() {
-            const shape = document.getElementById("shape").value;
-            const candle = document.getElementById("preview");
-            if (shape === "tall") {
-                candle.style.height = "200px";
-            } else if (shape === "short") {
-                candle.style.height = "150px";
-            } else if (shape === "round") {
-                candle.style.borderRadius = "50px";
-            } else if (shape === "square") {
-                candle.style.borderRadius = "0";
-            }
-        }
-
-        function togglePatternColor() {
-            const pattern = document.getElementById("pattern").value;
-            document.getElementById("patternColorDiv").style.display = pattern === "none" ? "none" : "block";
-            updateCandle(); // Update candle preview immediately when pattern changes
-        }
-
         function updateCandle() {
-            const color = document.getElementById("colorPicker").value;
-            const patternColor = document.getElementById("patternColorPicker").value || "white"; // Default color
-            const patternType = document.getElementById("pattern").value;
-            const candle = document.getElementById("preview");
-
-            // Set base color with gradient
-            candle.style.background = color; // Base color
-
-            // Set pattern background
-            if (patternType === "striped") {
-                candle.style.backgroundImage = `repeating-linear-gradient(45deg, ${patternColor}, ${patternColor} 10px, ${color} 10px, ${color} 20px)`;
-            } else if (patternType === "triangular") {
-                // Proper triangular pattern with small triangles
-                candle.style.backgroundImage = `linear-gradient(45deg, ${patternColor} 25%, transparent 25%), 
-                                                 linear-gradient(-45deg, ${patternColor} 25%, transparent 25%)`;
-                candle.style.backgroundSize = "20px 20px"; // Adjust grid size to create triangles
-            } else {
-                candle.style.backgroundImage = "none";
-            }
-
-            // Handle drawings
-            const drawing = document.getElementById("drawings").value;
-            const drawingCount = document.getElementById("drawingCount").value;
-            candle.innerHTML = ""; 
-
-            if (drawing !== "none") {
-                const drawings = [drawing]; // Ensure only the selected drawing is shown
-                let positions = {
-                    "1": [["50%", "50%"]],
-                    "2": [["50%", "30%"], ["50%", "70%"]],
-                    "4": [["30%", "30%"], ["70%", "30%"], ["30%", "70%"], ["70%", "70%"]],
-                    "pattern": [["20%", "20%"], ["50%", "20%"], ["80%", "20%"], ["20%", "50%"], ["50%", "50%"], ["80%", "50%"], ["20%", "80%"], ["50%", "80%"], ["80%", "80%"]]
-                };
-                let selectedPositions = positions[drawingCount] || positions["1"];
-                selectedPositions.forEach(pos => {
-                    drawings.forEach(draw => {
-                        let span = document.createElement("span");
-                        span.classList.add("drawing");
-                        span.innerText = draw;  // Emoji is shown directly here
-                        span.style.top = pos[0];
-                        span.style.left = pos[1];
-                        span.style.transform = "translate(-50%, -50%)";
-                        candle.appendChild(span);
-                    });
-                });
-            }
+            let shape = document.getElementById("shape").value;
+            let color = document.getElementById("color").value;
+            let drawing = document.getElementById("drawing").value;
+            let scent = document.getElementById("scent").value;
+            
+            let imageName = `images/candle ${shape} ${color}`;
+            if (drawing) imageName += ` ${drawing}`;
+            imageName += ".png";
+            
+            document.getElementById("candleImage").src = imageName;
+            document.getElementById("finalScent").innerText = "Selected Scent: " + scent;
         }
     </script>
 </body>
