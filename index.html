@@ -3,74 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customize Your Candle</title>
+    <title>Candle Customizer</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; }
-        .candle-preview {
-            margin: 20px auto;
-            width: 150px;
-            height: 200px;
-            border-radius: 10px;
-            border: 2px solid black;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-        .hidden { display: none; }
+        .container { margin: 20px auto; width: 300px; }
+        img { width: 100%; max-width: 250px; display: block; margin: auto; }
     </style>
 </head>
 <body>
     <h2>Customize Your Candle</h2>
     
-    <label for="shape">Choose a shape:</label>
-    <select id="shape">
-        <option value="round">Round</option>
-        <option value="square">Square</option>
-        <option value="cylinder">Cylinder</option>
-    </select>
-    
-    <label for="color">Choose a color:</label>
-    <select id="color">
-        <option value="standard">Standard</option>
-        <option value="green">Green</option>
-        <option value="blue">Blue</option>
-        <option value="yellow">Yellow</option>
-        <option value="orange">Orange</option>
-        <option value="red">Red</option>
-        <option value="pink">Pink</option>
-        <option value="purple">Purple</option>
-    </select>
-    
-    <label for="drawing">Choose a drawing:</label>
-    <select id="drawing">
-        <option value="none">None</option>
-        <option value="heart">Heart</option>
-        <option value="star">Star</option>
-        <option value="flower">Flower</option>
-    </select>
-    
-    <h3>Preview:</h3>
-    <img id="candlePreview" class="candle-preview" src="images/candle round standard.png" alt="Candle Preview">
+    <div class="container">
+        <img id="candleImage" src="images/candle round standard.png" alt="Customized Candle">
+        
+        <label>Choose Shape:</label>
+        <select id="shape" onchange="updateCandle()">
+            <option value="round">Round</option>
+            <option value="square">Square</option>
+            <option value="cylinder">Cylinder</option>
+        </select>
+        
+        <label>Choose Color:</label>
+        <select id="color" onchange="updateCandle()">
+            <option value="standard">Standard</option>
+            <option value="green">Green</option>
+            <option value="blue">Blue</option>
+            <option value="purple">Purple</option>
+            <option value="pink">Pink</option>
+            <option value="red">Red</option>
+            <option value="orange">Orange</option>
+            <option value="yellow">Yellow</option>
+        </select>
+        
+        <label>Choose Drawing:</label>
+        <select id="drawing" onchange="updateCandle()">
+            <option value="">None</option>
+            <option value="heart">Heart</option>
+            <option value="star">Star</option>
+            <option value="flower">Flower</option>
+        </select>
+        
+        <label>Choose Scent:</label>
+        <select id="scent" onchange="updateScent()">
+            <option value="Vanilla">Vanilla</option>
+            <option value="Lavender">Lavender</option>
+            <option value="Sandalwood">Sandalwood</option>
+            <option value="Apple & Cinnamon">Apple & Cinnamon</option>
+            <option value="Lotus">Lotus</option>
+            <option value="Lilac">Lilac</option>
+        </select>
+        
+        <p id="finalScent">Selected Scent: None</p>
+    </div>
     
     <script>
-        function updateCandlePreview() {
-            const shape = document.getElementById("shape").value;
-            const color = document.getElementById("color").value;
-            const drawing = document.getElementById("drawing").value;
+        function updateCandle() {
+            let shape = document.getElementById("shape").value;
+            let color = document.getElementById("color").value;
+            let drawing = document.getElementById("drawing").value;
             
-            let imageName = `candle ${shape} ${color}`;
-            if (drawing !== "none") {
-                imageName += ` ${drawing}`;
-            }
+            let imageName = `images/candle ${shape} ${color}`;
+            if (drawing) imageName += ` ${drawing}`;
             imageName += ".png";
             
-            document.getElementById("candlePreview").src = `images/${imageName}`;
+            document.getElementById("candleImage").src = imageName;
         }
-        
-        document.getElementById("shape").addEventListener("change", updateCandlePreview);
-        document.getElementById("color").addEventListener("change", updateCandlePreview);
-        document.getElementById("drawing").addEventListener("change", updateCandlePreview);
+
+        function updateScent() {
+            let scent = document.getElementById("scent").value;
+            document.getElementById("finalScent").innerText = "Selected Scent: " + scent;
+        }
     </script>
 </body>
 </html>
