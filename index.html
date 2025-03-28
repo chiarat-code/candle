@@ -6,24 +6,31 @@
     <title>Customize Your Candle</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; }
-        .candle-preview img { width: 150px; height: 200px; }
+        .candle-preview {
+            margin: 20px auto;
+            width: 150px;
+            height: 200px;
+            border-radius: 10px;
+            border: 2px solid black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
     <h2>Customize Your Candle</h2>
     
-    <div class="candle-preview">
-        <img id="candleImage" src="images/candle round.png" alt="Candle Preview">
-    </div>
-    
-    <label for="shape">Choose Shape:</label>
+    <label for="shape">Choose a shape:</label>
     <select id="shape">
         <option value="round">Round</option>
         <option value="square">Square</option>
         <option value="cylinder">Cylinder</option>
     </select>
     
-    <label for="color">Choose Color:</label>
+    <label for="color">Choose a color:</label>
     <select id="color">
         <option value="standard">Standard</option>
         <option value="green">Green</option>
@@ -35,7 +42,7 @@
         <option value="purple">Purple</option>
     </select>
     
-    <label for="drawing">Choose Drawing:</label>
+    <label for="drawing">Choose a drawing:</label>
     <select id="drawing">
         <option value="none">None</option>
         <option value="heart">Heart</option>
@@ -43,18 +50,22 @@
         <option value="flower">Flower</option>
     </select>
     
+    <h3>Preview:</h3>
+    <img id="candlePreview" class="candle-preview" src="images/candle round standard.png" alt="Candle Preview">
+    
     <script>
         function updateCandlePreview() {
-            let shape = document.getElementById("shape").value;
-            let color = document.getElementById("color").value;
-            let drawing = document.getElementById("drawing").value;
+            const shape = document.getElementById("shape").value;
+            const color = document.getElementById("color").value;
+            const drawing = document.getElementById("drawing").value;
             
-            let imagePath = `images/candle ${shape}`;
-            if (color !== "standard") imagePath += ` ${color}`;
-            if (drawing !== "none") imagePath += ` ${drawing}`;
-            imagePath += ".png";
+            let imageName = `candle ${shape} ${color}`;
+            if (drawing !== "none") {
+                imageName += ` ${drawing}`;
+            }
+            imageName += ".png";
             
-            document.getElementById("candleImage").src = imagePath;
+            document.getElementById("candlePreview").src = `images/${imageName}`;
         }
         
         document.getElementById("shape").addEventListener("change", updateCandlePreview);
